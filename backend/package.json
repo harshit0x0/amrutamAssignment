@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for amrutam assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --watch",
+    "start": "nodemon dist/index.js"
+  },
+  "author": "Harshit Pandey",
+  "license": "ISC",
+  "dependencies": {
+    "@types/mongoose": "^5.11.97",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.2",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
+  }
+}
