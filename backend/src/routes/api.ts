@@ -1,5 +1,5 @@
 import express from "express";
-import Api from "../model/api";
+import ApiController from "../controllers/apiControllers";
 
 const ApiRouter = express.Router(); 
 
@@ -11,18 +11,9 @@ const ApiRouter = express.Router();
 // })
 
 
-ApiRouter.post('/new', async(req, res) => {
-    try{
-        const apiData = req.body;
-        // console.log(apiData);
-        const api = new Api(apiData);
-        await api.save();
-        console.log("New API Created!!");
-        res.status(200).send(api);
-    }catch(e){
-        console.log(e);
-        res.status(400).send(e);
-    }
-})
+ApiRouter.post('/new', ApiController.createApi);
+ApiRouter.get('/:id', ApiController.getApi);
+ApiRouter.put('/:id', ApiController.updateApi);
+ApiRouter.delete('/:id', ApiController.deleteApi);
 
 export default ApiRouter;

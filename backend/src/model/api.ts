@@ -8,12 +8,9 @@ const apiSchema = new mongoose.Schema({
         value: String
     }],
     body: String,
-    response: {
-        status: Number,
-        body: String,
-    },
     successApiID: this,
-    failureApiID: this
+    failureApiID: this,
+    parentApiID: this
 })
 
 

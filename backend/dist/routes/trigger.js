@@ -4,22 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const trigger_1 = __importDefault(require("../model/trigger"));
-const uuid_1 = require("uuid");
+const triggerControllers_1 = __importDefault(require("../controllers/triggerControllers"));
 const TriggerRouter = express_1.default.Router();
-TriggerRouter.post('/new', async (req, res) => {
-    try {
-        const triggerData = req.body;
-        triggerData.id = (0, uuid_1.v4)();
-        const trigger = new trigger_1.default(triggerData);
-        await trigger.save();
-        console.log("New Trigger Created!!");
-        res.status(200).send(trigger);
-    }
-    catch (e) {
-        console.log(e);
-        res.status(400).send(e);
-    }
-});
+TriggerRouter.post('/new', triggerControllers_1.default.createTrigger);
+TriggerRouter.get('/:id', triggerControllers_1.default.getTrigger);
+TriggerRouter.put('/:id', triggerControllers_1.default.updateTrigger);
+TriggerRouter.delete('/:id', triggerControllers_1.default.deleteTrigger);
 exports.default = TriggerRouter;
 //# sourceMappingURL=trigger.js.map

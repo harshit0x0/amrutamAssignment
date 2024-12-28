@@ -12,12 +12,9 @@ const apiSchema = new mongoose_1.default.Schema({
             value: String
         }],
     body: String,
-    response: {
-        status: Number,
-        body: String,
-    },
     successApiID: this,
-    failureApiID: this
+    failureApiID: this,
+    parentApiID: this
 });
 const Api = mongoose_1.default.model('API', apiSchema);
 exports.default = Api;
