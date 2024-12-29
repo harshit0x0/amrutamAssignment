@@ -1,21 +1,10 @@
 import express from 'express';
-import Journey from '../model/journey';
-
+import Journey from '../controllers/journeyControllers';
 
 const JourneyRouter = express.Router();
-
-JourneyRouter.post('/new', async(req, res) => {
-    try{
-        const journeyData = req.body;
-        const journey = new Journey(journeyData);
-        await journey.save();
-        console.log("New Journey Created!!");
-        res.status(200).send(journey);
-    }catch(e){
-        console.log(e);
-        res.status(400).send(e);
-    }
-})
-
+JourneyRouter.post('/new', Journey.createJourney);
+JourneyRouter.get('/:id', Journey.getJourney);
+JourneyRouter.post('/:id/start', Journey.startWorkflow);
+JourneyRouter.get('/:id/logs', Journey.getLogs);
 
 export default JourneyRouter;

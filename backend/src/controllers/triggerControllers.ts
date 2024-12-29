@@ -6,12 +6,15 @@ module.exports.getTrigger = async function(req: any, res: any){
     try{
         const id = req.params.id;
         const trigger = await Trigger.findOne({_id: id}).populate('linkedApiID');
-        if(trigger === null) res.status(404).send("Trigger not found");
+        if(trigger === null){
+             res.status(404).send("Trigger not found");
+             return;
+        }
         console.log("Trigger Found!!");
         res.status(200).send(trigger);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -24,8 +27,8 @@ module.exports.createTrigger = async function(req: any, res: any) {
         console.log("New Trigger Created!!");
         res.status(200).send(trigger);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -38,8 +41,8 @@ module.exports.updateTrigger = async function(req: any, res: any) {
         console.log("Trigger Updated!!");
         res.status(200).send(trigger);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -52,8 +55,8 @@ module.exports.deleteTrigger = async function(req: any, res:any){
         console.log("Trigger Deleted!!");
         res.status(200).send(trigger);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 

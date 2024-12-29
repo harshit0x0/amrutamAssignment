@@ -1,15 +1,32 @@
 import Api from "../model/api";
 
+async function getPopulatedApi(id : any){
+    const populatedApi:any = await Api.findOne({_id: id}).populate('successApiID').populate('failureApiID');
+    if(populatedApi.successApiID !== null){
+        const SuccessApi = await getPopulatedApi(populatedApi.successApiID);
+        populatedApi.successApiID = SuccessApi;
+    } 
+    if(populatedApi.failureApiID !== null){
+        const FailureApi = await getPopulatedApi(populatedApi.failureApiID);
+        populatedApi.failureApiID = FailureApi;
+    }
+    return populatedApi;
+}
+
 module.exports.getApi = async function(req: any, res: any){
     try{
         const id = req.params.id;
-        const api = await Api.findOne({_id: id}).populate('successApiID').populate('failureApiID');;
-        if(api === null) res.status(404).send("Api not found");
+        const populatedApi = await getPopulatedApi(id);
+
+        if(populatedApi === null) {
+            res.status(404).send("Api not found");
+            return;
+        }
         console.log("Api Found!!");
-        res.status(200).send(api);
+        res.status(200).send(populatedApi);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -22,8 +39,8 @@ module.exports.createApi = async function(req: any, res: any) {
         console.log("New Api Created!!");
         res.status(200).send(api);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -32,7 +49,10 @@ module.exports.updateApi = async function(req: any, res: any) {
         const id = req.params.id;
         const data = req.body;
         const api = await Api.findOne({_id: id});
-        if(api === null) res.status(404).send("Api not found");
+        if(api === null){
+            res.status(404).send("Api not found");
+            return;
+        }
         
         //if parent api is to be updated
         if(data.parentApiID){
@@ -49,8 +69,8 @@ module.exports.updateApi = async function(req: any, res: any) {
         console.log("Api Updated!!");
         res.status(200).send(updatedApi);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 
@@ -59,7 +79,10 @@ module.exports.deleteApi = async function(req: any, res:any){
     try{
         const id = req.params.id;
         const api = await Api.findOne({_id: id});
-        if(api === null) res.status(404).send("Api not found");
+        if(api === null) {
+            res.status(404).send("Api not found");
+            return;
+        }
 
         //update child apis of parent
         if(api.parentApiID !== null){
@@ -83,8 +106,8 @@ module.exports.deleteApi = async function(req: any, res:any){
         console.log("Api Deleted!!");
         res.status(200).send(deletedApi);
     }catch(e){
-        console.log(e);
-        res.status(400).send(e);
+        console.log(e.message);
+        res.status(400).send(e.message);
     }
 }
 

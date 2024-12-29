@@ -16,6 +16,14 @@ const triggerSchema = new mongoose.Schema({
     }
 })
 
+triggerSchema.pre('validate', async function(next) {
+    const trigger = this;
+    const webhookURL = trigger.webhook.url;
+    if((/^(http|https):\/\//.test(webhookURL)) === false) {
+        throw new Error("Invalid webhook url, only http, https allowed");
+    }
+    next();
+})
 
 const Trigger = mongoose.model('Trigger', triggerSchema);
 export default Trigger;

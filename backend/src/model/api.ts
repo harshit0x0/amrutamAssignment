@@ -8,11 +8,29 @@ const apiSchema = new mongoose.Schema({
         value: String
     }],
     body: String,
-    successApiID: this,
-    failureApiID: this,
-    parentApiID: this
+    successApiID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'API'
+    },
+    failureApiID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'API'
+    },
+    parentApiID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'API'
+    }
 })
 
+
+apiSchema.pre("validate", async function(next){
+    const api = this;
+    const url = api.url;
+    if(/^(http|https):\/\//.test(url) === false) {
+        throw new Error("Invalid url, only http, https allowed");
+    }
+    next();
+})
 
 const Api = mongoose.model('API', apiSchema);
 export default Api;
