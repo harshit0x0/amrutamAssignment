@@ -4,8 +4,8 @@ import Trigger from "../model/trigger";
 
 module.exports.getTrigger = async function(req: any, res: any){
     try{
-        const id = req.params.id;
-        const trigger = await Trigger.findOne({_id: id}).populate('linkedApiID');
+        // const id = req.params.id;
+        const trigger = await Trigger.findOne().populate('linkedApiID');
         if(trigger === null){
              res.status(404).send("Trigger not found");
              return;
@@ -37,7 +37,10 @@ module.exports.updateTrigger = async function(req: any, res: any) {
         const id = req.params.id;
         const data = req.body;
         const trigger = await Trigger.findOneAndUpdate({_id: id}, data, {new: true});
-        if(trigger === null) res.status(404).send("Trigger not found");
+        if(trigger === null){
+             res.status(404).send("Trigger not found");
+             return;
+        }
         console.log("Trigger Updated!!");
         res.status(200).send(trigger);
     }catch(e){

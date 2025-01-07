@@ -19,6 +19,10 @@ const apiSchema = new mongoose.Schema({
     parentApiID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'API'
+    },
+    pos: {
+        x: Number,
+        y: Number
     }
 })
 

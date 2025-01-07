@@ -1,17 +1,8 @@
 'use client'
 import { useState } from "react";
+import { TriggerType } from "../../types/types";
 
-
-interface triggerNodeType {
-    name: string,
-    webhookURL: string,
-    samplePayload: string,
-    type: string,
-    payload: string,
-    linkedAPI: string | null
-}
-
-export default function CreateTrigger ({create, isCreated, setIsCreated} : {create: (e:triggerNodeType)=>void, isCreated: boolean, setIsCreated: (e:boolean)=> void} ) {
+export default function CreateTrigger ({create, isCreated, setIsCreated} : {create: (e:TriggerType)=>void, isCreated: boolean, setIsCreated: (e:boolean)=> void} ) {
     // const [isCreated, setIsCreated] = useState(false);
     const [isDialogOpen ,setIsDialogOpen] = useState(false);
 
@@ -19,17 +10,20 @@ export default function CreateTrigger ({create, isCreated, setIsCreated} : {crea
         e.preventDefault();
         setIsCreated(true);
         setIsDialogOpen(false);
-        const trig: triggerNodeType = {
-            name: "Trigger",
-            // @ts-expect-error formdata  
-            webhookURL: e.target.webHookUrl.value,
-            // @ts-expect-error formdata  
-            samplePayload: e.target.samplePayload.value,
-            // @ts-expect-error formdata  
-            type: e.target.type.value,
-            // @ts-expect-error formdata  
-            payload: e.target.payload.value,
-            linkedAPI: null
+        const trig: TriggerType = {
+            webhook: {
+                // @ts-expect-error formdata  
+                url: e.target.webHookUrl.value,
+                // @ts-expect-error formdata  
+                samplePayload: e.target.samplePayload.value,
+            },
+            webhookType: {
+                // @ts-expect-error formdata  
+                typeId: e.target.type.value,
+                // @ts-expect-error formdata  
+                payloadValue: e.target.payload.value,
+            },            
+            linkedApiID: null
         }
         console.log("trig: ", trig);
         create(trig);
@@ -50,7 +44,7 @@ export default function CreateTrigger ({create, isCreated, setIsCreated} : {crea
                         <div className="space-y-4 bg-violet-400 px-4 py-4 w-fit rounded">
                             <div className="fle space-x-4">
                                 <label htmlFor="webHookUrl">URL</label>
-                                < input className="rounded px-2 py-1" type="text" name="webHookUrl" id="webHookUrl" placeholder=""/>
+                                <input className="rounded px-2 py-1" type="text" name="webHookUrl" id="webHookUrl" placeholder=""/>
                             </div>
                             <div className="flex space-x-4">
                                 <label htmlFor="samplePayload">sample payload</label>

@@ -11,11 +11,32 @@ async function initiateAPIflow(api: any, journey_id: string) {
         console.log("api hit: ", api.url);
         const apiHeaders = api.headers.map((header: any) => `${header.key}: ${header.value}`);
         const headerObj = {...apiHeaders};
-        const response = await fetch(api.url, {
-            method: api.method,
-            headers: headerObj,
-            body: api.method === "GET" ? null : api.body,
-        });
+        let response;
+        try{
+            response = await fetch(api.url, {
+                method: api.method,
+                headers: headerObj,
+                body: api.method === "GET" ? null : api.body,
+            });
+        }catch(e){
+            const log = new Log({
+                log: {
+                    url: api.url, 
+                    payload: api.body, 
+                    status: "500", 
+                    response: null, 
+                    apiID: api._id, 
+                    message: "Failure", 
+                    timeStamp: new Date()
+                }}); 
+            await log.save();
+            logs.push(log);
+            if(api.failureApiID != null) {
+                api = await Api.findOne({_id: api.failureApiID});
+            }else {
+                break;
+            }
+        }
         // console.log("response: ", response);
         if(response.ok) {
             // const jsonResponse = await response.json();
@@ -67,8 +88,8 @@ async function initiateAPIflow(api: any, journey_id: string) {
 
 module.exports.getJourney = async function(req: any, res: any){
     try{
-        const id = req.params.id;
-        const journey = await Journey.findOne({_id: id})
+        // const id = req.params.id;
+        const journey = await Journey.findOne();
         if(journey === null) {
             res.status(404).send("Journey not found");
             return;
@@ -87,6 +108,23 @@ module.exports.createJourney = async function(req: any, res: any) {
         const journey = new Journey(journeyData);
         await journey.save({ validateBeforeSave: true });
         console.log("New Journey Created!!");
+        res.status(200).send(journey);
+    }catch(e){
+        console.log(e.message);
+        res.status(400).send(e.message);
+    }
+}
+
+module.exports.updateJourney = async function(req: any, res: any) {
+    try{
+        const id = req.params.id;
+        const data = req.body;
+        const journey = await Journey.findOneAndUpdate({_id: id}, data, {new: true});
+        if(journey === null) {
+            res.status(404).send("Journey not found");
+            return;
+        }
+        console.log("Journey Updated!!");
         res.status(200).send(journey);
     }catch(e){
         console.log(e.message);
@@ -155,5 +193,20 @@ module.exports.getLogs = async function(req: any, res: any) {
     }
 }
 
+
+module.exports.findAllApis = async function(req: any, res: any) {
+    try{
+        const apis = await Api.find();
+        if(apis === null) {
+            res.status(404).send("Apis not found");
+            return;
+        }
+        console.log("Apis Found!!");
+        res.status(200).send(apis);
+    }catch(e){
+        console.log(e.message);
+        res.status(400).send(e.message);
+    }
+}
 
 export default module.exports;

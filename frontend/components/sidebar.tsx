@@ -1,22 +1,18 @@
 'use client'
 import { useState } from "react";
 import Image from "next/image";
+import { ApiType } from "../../types/types";
 
 
-interface apiNodeType {
-    method: string;
-    url: string;
-    name: string;
-    successAPI: string | null;
-    failureAPI: string | null;
-}
-
-export default function Sidebar({onClick}: {onClick: (e: apiNodeType) => void}) {
+export default function Sidebar({onClick}: {onClick: (e: ApiType) => void}) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        // @ts-expect-error e.target.elements is element type
+        const rect = e.target.elements[2].getBoundingClientRect();
+        const posX = rect.x-100, posY = rect.y-150;
         setIsDialogOpen(false);
-        const newApi: apiNodeType = {
+        const newApi: ApiType = {
             // @ts-expect-error formdata  
             method: e.target.apiMethod.value,
             // @ts-expect-error formdata  
@@ -24,10 +20,13 @@ export default function Sidebar({onClick}: {onClick: (e: apiNodeType) => void}) 
             // @ts-expect-error formdata  
             name: e.target.apiName.value,
             successAPI: null,
-            failureAPI: null    
-            // successAPI: e.target.successAPI.value,
-            // failureAPI: e.target.failureAPI.value
-        }
+            failureAPI: null,    
+            parentApiID: null,
+            pos: {
+                x: posX ?? 200,
+                y: posY ?? 200,
+            }
+        };
         onClick(newApi);
     }
 
