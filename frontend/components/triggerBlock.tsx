@@ -46,13 +46,13 @@ export default function TriggerBlock({canvasSize, onDelete, triggerValues, jID} 
             ref = {ref}
             style={{userSelect: "none", left: pos.x, top: pos.y}}
         >
-            <div className="relative p-6 py-16 space-y-4 z-10 flex flex-col w-fit bg-violet-400 border border-4 rounded-lg border-violet-400 absolute">
+            <div className="w-[30vw] lg:w-[12vw] relative p-6 py-16 space-y-4 z-10 flex flex-col w-fit bg-violet-400 border border-4 rounded-lg border-violet-400 absolute">
                 
                 <h3 className="font-bold bg-white px-3 py-2">Trigger</h3>
-                <div className="text-xs">URL: {triggerValues.webhook.url}</div>
+                {/* <div className="text-xs w-fit bg-white">URL: {triggerValues.webhook.url}</div> */}
                 {/* <div>Method: GET</div> */}
 
-                <a href={`${process.env.NEXT_PUBLIC_BASE_URL}/journey/${jID}/start`} className="text-xs italic underline"> Trigger link </a>
+                <a href={`${process.env.NEXT_PUBLIC_BASE_URL}/journey/${jID}/start`} className="text-xs w-fit italic underline"> Trigger link </a>
                 <div className="absolute flex flex-col bottom-1 right-1">
                     <div className="flex">
                         <label className="text-xs" htmlFor="successBtn">start</label>

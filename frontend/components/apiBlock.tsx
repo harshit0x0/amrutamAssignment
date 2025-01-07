@@ -1,23 +1,35 @@
 'use client'
 import { useState, useRef } from "react"
-import { ApiType } from "../../types/types";
+import { CilentApiType } from "../../types/types";
 
-export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canvasSize: {height: number, width: number }, values: ApiType}) {
+//  type posType = {
+//         succBtnPos: {x: number, y: number}, 
+//         failBtnPos: {x: number, y: number}, 
+//         parBtnPos: {x: number, y: number}
+//     }; 
+
+export default function ApiBlock({idx, canvasSize, values} : 
+    {idx: number ,canvasSize: {height: number, width: number }, values: CilentApiType}) {
     
+    //if object is already in local storage
+    const cachedData = localStorage.getItem(`blockPos-${values._id}`);
+    let cachedPos = null;
+    if(cachedData) {
+        cachedPos = JSON.parse(cachedData);
+    }
+
     const [cursorPos, setCursorPos] = useState({x:0, y: 0});
     const [selected, setSelected] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const [pos, setPos] = useState({
-                                x: values.pos?.x,
-                                y: values.pos?.y
+                                x: cachedPos?.x ?? values.pos?.x,
+                                y: cachedPos?.y ?? values.pos?.y
                             });
 
     const successRef = useRef<HTMLButtonElement>(null);
     const failureRef = useRef<HTMLButtonElement>(null);
     const parentRef = useRef<HTMLButtonElement>(null);
                         
-    // console.log("pos, ", pos);
-
     const handleMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if(!selected) return;
         let dx = e.clientX - cursorPos.x;
@@ -32,23 +44,23 @@ export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canva
                 y: prev.y+dy
             }
         });
+
+        // const newPos : posType = {
+        //     succBtnPos: {
+        //         x: successRef.current?.getBoundingClientRect().left ?? -1,
+        //         y: successRef.current?.getBoundingClientRect().top ?? -1
+        //     },
+        //     failBtnPos: {
+        //         x: failureRef.current?.getBoundingClientRect().left ?? -1,
+        //         y: failureRef.current?.getBoundingClientRect().top ?? -1
+        //     },  
+        //     parBtnPos: {
+        //         x: parentRef.current?.getBoundingClientRect().left ?? -1,
+        //         y: parentRef.current?.getBoundingClientRect().top ?? -1
+        //     }               
+        // };
+        localStorage.setItem(`blockPos-${values._id}`, JSON.stringify({x: pos.x, y: pos.y}));
         setCursorPos({x: e.clientX, y: e.clientY});
-        const position = {
-            success: {
-                x: successRef.current?.getBoundingClientRect().left,
-                y: successRef.current?.getBoundingClientRect().top
-            },
-            failure: {
-                x: failureRef.current?.getBoundingClientRect().left,
-                y: failureRef.current?.getBoundingClientRect().top
-            },
-            parent: {
-                x: parentRef.current?.getBoundingClientRect().left,
-                y: parentRef.current?.getBoundingClientRect().top
-            }
-        }
-        // console.log(position);
-        localStorage.setItem(`pos-${values._id}`, JSON.stringify(position));
     }
 
     const handleDelete = async() => {
@@ -59,6 +71,8 @@ export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canva
         }
         ref.current?.remove();
         const data = await res.json();
+        localStorage.removeItem(`blockPos-${values._id}`);
+        localStorage.removeItem(`pos-${values._id}`);
         console.log("deleted api: ", idx,  data);
     }
 
@@ -72,16 +86,17 @@ export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canva
             ref = {ref}
             style={{userSelect: "none", left: pos.x, top: pos.y}}
         >
-            <div className="min-w-[10vw] relative p-6 pb-16 space-y-4 z-10 flex flex-col w-fit bg-white border border-4 rounded-lg border-violet-400 absolute">
+            <div className="w-[30vw] lg:w-[12vw] overflow-hidden relative p-6 pb-16 space-y-4 z-10 flex flex-col w-fit bg-white border border-4 rounded-lg border-violet-400 absolute">
                 <div className="absolute space-y-2 flex flex-col top-1 left-1">
                     <button 
                         className="w-4 h-4 rounded-full border border-1 bg-violet-200"
+                        onClick={(e) => {console.log(e.clientX, e.clientY)}}
                         ref = {parentRef}
                     ></button>
                 </div>
                 <h3 className="font-bold bg-white px-3 py-2">REST API</h3>
                 <div className="text-xs bg-green-200 text-green-500 px-3 py-1 rounded">{values.method}</div>
-                <div className="text-xs italic"> {values.url}</div>
+                <p className="text-xs italic text-wrap"> {values.url}</p>
 
                 <div className="absolute flex flex-col bottom-1 right-1">
                     <div className="flex justify-between">
@@ -90,7 +105,7 @@ export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canva
                             id="successBtn" 
                             ref={successRef}
                             className="w-3 h-3 m-auto mx-1 rounded-full border border-1 bg-violet-300"
-                            // onClick={(e) => {console.log(e.clientX, e.clientY)}}
+                            onClick={(e) => {console.log(e.clientX, e.clientY)}}
                         ></button>
                     </div>
                     <div className="flex justify-between">
@@ -98,7 +113,7 @@ export default function ApiBlock({idx, canvasSize, values} : {idx: number ,canva
                         <button 
                             id="failureBtn" 
                             className="w-3 h-3 m-auto mx-1 rounded-full border border-1 bg-violet-300"
-                            // onClick={(e) => {console.log(e.clientX, e.clientY);}}
+                            onClick={(e) => {console.log(e.clientX, e.clientY);}}
                             ref={failureRef}
                         ></button>
                     </div>

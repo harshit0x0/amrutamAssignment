@@ -4,8 +4,8 @@ import ApiBlock from "./apiBlock"
 import Sidebar from "@/components/sidebar"
 import CreateTrigger from "./createTrigger"
 import TriggerBlock from "./triggerBlock"
-import {JourneyType, TriggerType, ApiType} from '../../types/types'
-// import Line from "./line";
+import {JourneyType, TriggerType, CilentApiType} from '../../types/types'
+// import Line from "./line"
 
 // interface ConnectionType {
 //     source: {x: number, y: number};
@@ -14,14 +14,38 @@ import {JourneyType, TriggerType, ApiType} from '../../types/types'
 
 export default function Canvas({journey}: {journey: JourneyType|null}) {
 
-    const [apiNodes, setApiNodes] = useState<ApiType[]>();
+    const [apiNodes, setApiNodes] = useState<CilentApiType[]>();
     const [triggerNode, setTriggerNode] = useState<TriggerType | null>(journey?.triggerID ?? null);
     const [canvasSize, setCanvasSize] = useState({height: 0, width: 0});
     const [triggerCreated, setTriggerCreated] = useState(journey?.triggerID !== null ? true : false);
-    // const [connections, setConnections] = useState<ConnectionType[]>([]);
+    
+//     const connections : ConnectionType[] | undefined  = apiNodes?.map((apiNode) => {
+//     // console.log("apiNode", apiNode);
+//     const connectionsForApiNode: ConnectionType[] = [];
+
+//     if(apiNode.successApiID) {
+//         const source = apiNode.succPos;
+
+//         //@ts-expect-error because apiNode is unpopulated 
+//         const target = apiNodes.find((api) => api._id === apiNode.successApiID as string)?.parPos;
+//         if(source && target) connectionsForApiNode.push({source, target});
+//         // console.log("source", source, "target", target);
+//     }
+//     if(apiNode.failureApiID) {
+//         const source = apiNode.failPos;
+//         //@ts-expect-error because apiNode is unpopulated 
+//         const target = apiNodes.find((api) => api._id === apiNode.failureApiID as string)?.parPos;
+//         if(source && target) connectionsForApiNode.push({source, target});
+//         // console.log("source", source, "target", target);
+//     }
+
+//     return connectionsForApiNode;
+// }).flat();
+    
+    
     
     const canvasRef = useRef(null);
-    const createApiBlock = async(values : ApiType) => {
+    const createApiBlock = async(values : CilentApiType) => {
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/new`, {
             method: 'POST',
@@ -59,6 +83,26 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
         setTriggerNode(values);
     }
 
+    // type posType = {
+    //     succBtnPos: {x: number, y: number}, 
+    //     failBtnPos: {x: number, y: number}, 
+    //     parBtnPos: {x: number, y: number}
+    // }; 
+
+    // function updateApiPos(id: string, pos: posType) {
+    //     const apiNode = apiNodes?.find((api) => api._id === id);
+    //     if(!apiNode) return;
+    //     apiNode.succPos = pos.succBtnPos;
+    //     apiNode.failPos = pos.failBtnPos; 
+    //     apiNode.parPos = pos.parBtnPos;
+
+    //     setApiNodes((prev) => {
+    //         const prevApis = prev?.filter((api) => api._id !== id);
+    //         if(!prevApis) return prev;
+    //         return [...prevApis, apiNode];
+    //     })
+    // }
+
     //fetch all apis related to the journey
     useEffect(() => {   
         async function fetchApis(){
@@ -73,35 +117,8 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
         }
         fetchApis();
     }, []);
-
-    //fetch connections
-    // useEffect(() => {
-    //     apiNodes?.forEach((api) => {
-    //         // console.log(api);
-    //         const pos = localStorage.getItem(`pos-${api._id}`);
-    //         const srcObj = pos ? JSON.parse(pos) : {x: 0, y: 0};
-    //         if(api.successApiID){
-    //             const pos = localStorage.getItem(`pos-${api.successApiID}`);
-    //             if(pos === null) return;
-    //             const posObj = JSON.parse(pos);
-    //             const source = {x: srcObj.success.x, y: srcObj.success.y};
-    //             const target = {x: posObj.parent.x, y: posObj.parent.y};
-    //             setConnections((prev) => [...prev, {source: source, target: target}]);
-    //         }
-    //         if(api.failureApiID){
-    //             const pos = localStorage.getItem(`pos-${api.failureApiID}`);
-    //             if(pos === null) return;
-    //             const posObj = JSON.parse(pos);
-    //             // console.log("api: ", api._id, " pos: ", posObj);
-    //             const source = {x: srcObj.failure.x, y: srcObj.failure.y};
-    //             const target = {x: posObj.parent.x, y: posObj.parent.y};
-    //             setConnections((prev) => [...prev, {source: source, target: target}]);
-
-    //         }
-    //     });
-    //     // console.log("connections", connections);
-    // }, [apiNodes]);
-
+    
+    // console.log("connections", connections);
 
     //fetch trigger node
     useEffect(() => {
@@ -144,13 +161,15 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
                 <Sidebar onClick={createApiBlock}/>
             </nav>
             {
-                triggerNode && <TriggerBlock jID={journey?._id ?? ""} triggerValues={triggerNode} onDelete={() => {setTriggerNode(null); setTriggerCreated(false) }} canvasSize={canvasSize} />
+                triggerNode && 
+                <TriggerBlock jID={journey?._id ?? ""} triggerValues={triggerNode} onDelete={() => {setTriggerNode(null); setTriggerCreated(false) }} canvasSize={canvasSize} />
             }
             {
             apiNodes?.map((node,i)=>
                <ApiBlock idx={i} key={i} canvasSize={canvasSize} values={node}/>
             )
             }
+            {/* <Line from={{ x: 531, y: 554 }} to={{ x:868, y: 388 }} /> */}
             {/* {
                 connections?.map((connection, i) => 
                     <Line key={i} from={connection.source} to={connection.target} />

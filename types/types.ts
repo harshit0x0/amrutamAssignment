@@ -57,3 +57,11 @@ export interface JourneyType {
     response: object
 }
 
+export interface CilentApiType extends ApiType {
+    succPos?: {x: number, y: number};
+    failPos?: {x: number, y: number};
+    parPos?: {x: number, y: number};
+    successApiID: CilentApiType | null;
+    failureApiID: CilentApiType | null;
+    parentApiID: CilentApiType | null;
+}

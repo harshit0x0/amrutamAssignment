@@ -1,10 +1,10 @@
 'use client'
 import { useState } from "react";
 import Image from "next/image";
-import { ApiType } from "../../types/types";
+import { CilentApiType } from "../../types/types";
 
 
-export default function Sidebar({onClick}: {onClick: (e: ApiType) => void}) {
+export default function Sidebar({onClick}: {onClick: (e: CilentApiType) => void}) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -12,7 +12,7 @@ export default function Sidebar({onClick}: {onClick: (e: ApiType) => void}) {
         const rect = e.target.elements[2].getBoundingClientRect();
         const posX = rect.x-100, posY = rect.y-150;
         setIsDialogOpen(false);
-        const newApi: ApiType = {
+        const newApi: CilentApiType = {
             // @ts-expect-error formdata  
             method: e.target.apiMethod.value,
             // @ts-expect-error formdata  
