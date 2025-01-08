@@ -3,9 +3,9 @@ import ApiController from "../controllers/apiControllers";
 
 const ApiRouter = express.Router(); 
 
-ApiRouter.post('/new', ApiController.createApi);
 ApiRouter.get('/:id', ApiController.getApi);
-ApiRouter.put('/:id', ApiController.updateApi);
+ApiRouter.post('/', ApiController.createApi);
+ApiRouter.patch('/:id', ApiController.updateApi);
 ApiRouter.delete('/:id', ApiController.deleteApi);
 
 export default ApiRouter;

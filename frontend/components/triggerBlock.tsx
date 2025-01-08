@@ -27,7 +27,7 @@ export default function TriggerBlock({canvasSize, onDelete, triggerValues, jID} 
     }
 
     const handleDelete = async() => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/trigger/${triggerValues._id}`, {method: "DELETE"});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/triggers/${triggerValues._id}`, {method: "DELETE"});
         if(!res.ok){
             alert('Failed to delete trigger block ' + res.statusText);
             return;

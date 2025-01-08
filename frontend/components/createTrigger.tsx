@@ -23,7 +23,8 @@ export default function CreateTrigger ({create, isCreated, setIsCreated} : {crea
                 // @ts-expect-error formdata  
                 payloadValue: e.target.payload.value,
             },            
-            linkedApiID: null
+            linkedApiID: null,
+            pos: { x: 0, y: 0 },
         }
         console.log("trig: ", trig);
         create(trig);

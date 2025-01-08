@@ -2,12 +2,6 @@
 import { useState, useRef } from "react"
 import { CilentApiType } from "../../types/types";
 
-//  type posType = {
-//         succBtnPos: {x: number, y: number}, 
-//         failBtnPos: {x: number, y: number}, 
-//         parBtnPos: {x: number, y: number}
-//     }; 
-
 export default function ApiBlock({idx, canvasSize, values} : 
     {idx: number ,canvasSize: {height: number, width: number }, values: CilentApiType}) {
     
@@ -64,7 +58,7 @@ export default function ApiBlock({idx, canvasSize, values} :
     }
 
     const handleDelete = async() => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${values._id}`, {method: "DELETE"});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/apis/${values._id}`, {method: "DELETE"});
         if(!res.ok){
             alert('Failed to delete api block');
             return;

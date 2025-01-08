@@ -1,22 +1,33 @@
 import Api from "../model/api";
 
-async function getPopulatedApi(id : any){
-    const populatedApi:any = await Api.findOne({_id: id}).populate('successApiID').populate('failureApiID');
-    if(populatedApi.successApiID !== null){
-        const SuccessApi = await getPopulatedApi(populatedApi.successApiID);
-        populatedApi.successApiID = SuccessApi;
-    } 
-    if(populatedApi.failureApiID !== null){
-        const FailureApi = await getPopulatedApi(populatedApi.failureApiID);
-        populatedApi.failureApiID = FailureApi;
-    }
-    return populatedApi;
-}
+// async function getPopulatedApi(id : any, apis: any = []){
+//     const populatedApi:any = await Api.findOne({_id: id})?.populate('successApiID')?.populate('failureApiID');
+//     apis.push(populatedApi._id);
+//     if(!populatedApi) return null;
+//     if(populatedApi.successApiID !== null){
+//         if(apis.includes(populatedApi.successApiID)) {
+//             throw new Error("Loop detected");
+//         }
+//         const SuccessApi = await getPopulatedApi(populatedApi.successApiID);
+//         populatedApi.successApiID = SuccessApi;
+//     } 
+//     if(populatedApi.failureApiID !== null){
+//         if(apis.includes(populatedApi.failureApiID)) {
+//             throw new Error("Loop detected");
+//         }
+//         const FailureApi = await getPopulatedApi(populatedApi.failureApiID);
+//         populatedApi.failureApiID = FailureApi;
+//     }
+//     return populatedApi;
+// }
 
 module.exports.getApi = async function(req: any, res: any){
     try{
         const id = req.params.id;
-        const populatedApi = await getPopulatedApi(id);
+        const populatedApi = await Api.findOne({_id: id})
+                                                .populate('successApiID')
+                                                .populate('failureApiID')
+                                                .populate('parentApiID');
 
         if(populatedApi === null) {
             res.status(404).send("Api not found");
@@ -73,7 +84,6 @@ module.exports.updateApi = async function(req: any, res: any) {
         res.status(400).send(e.message);
     }
 }
-
 
 module.exports.deleteApi = async function(req: any, res:any){
     try{

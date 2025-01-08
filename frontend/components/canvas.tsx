@@ -5,12 +5,7 @@ import Sidebar from "@/components/sidebar"
 import CreateTrigger from "./createTrigger"
 import TriggerBlock from "./triggerBlock"
 import {JourneyType, TriggerType, CilentApiType} from '../../types/types'
-// import Line from "./line"
 
-// interface ConnectionType {
-//     source: {x: number, y: number};
-//     target: {x: number, y: number};
-// }
 
 export default function Canvas({journey}: {journey: JourneyType|null}) {
 
@@ -19,35 +14,11 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
     const [canvasSize, setCanvasSize] = useState({height: 0, width: 0});
     const [triggerCreated, setTriggerCreated] = useState(journey?.triggerID !== null ? true : false);
     
-//     const connections : ConnectionType[] | undefined  = apiNodes?.map((apiNode) => {
-//     // console.log("apiNode", apiNode);
-//     const connectionsForApiNode: ConnectionType[] = [];
-
-//     if(apiNode.successApiID) {
-//         const source = apiNode.succPos;
-
-//         //@ts-expect-error because apiNode is unpopulated 
-//         const target = apiNodes.find((api) => api._id === apiNode.successApiID as string)?.parPos;
-//         if(source && target) connectionsForApiNode.push({source, target});
-//         // console.log("source", source, "target", target);
-//     }
-//     if(apiNode.failureApiID) {
-//         const source = apiNode.failPos;
-//         //@ts-expect-error because apiNode is unpopulated 
-//         const target = apiNodes.find((api) => api._id === apiNode.failureApiID as string)?.parPos;
-//         if(source && target) connectionsForApiNode.push({source, target});
-//         // console.log("source", source, "target", target);
-//     }
-
-//     return connectionsForApiNode;
-// }).flat();
-    
-    
-    
     const canvasRef = useRef(null);
+
     const createApiBlock = async(values : CilentApiType) => {
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/new`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/apis/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +38,7 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
     };
 
     const createTriggerBlock= async(values: TriggerType) => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/trigger/new`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/triggers/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,30 +54,10 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
         setTriggerNode(values);
     }
 
-    // type posType = {
-    //     succBtnPos: {x: number, y: number}, 
-    //     failBtnPos: {x: number, y: number}, 
-    //     parBtnPos: {x: number, y: number}
-    // }; 
-
-    // function updateApiPos(id: string, pos: posType) {
-    //     const apiNode = apiNodes?.find((api) => api._id === id);
-    //     if(!apiNode) return;
-    //     apiNode.succPos = pos.succBtnPos;
-    //     apiNode.failPos = pos.failBtnPos; 
-    //     apiNode.parPos = pos.parBtnPos;
-
-    //     setApiNodes((prev) => {
-    //         const prevApis = prev?.filter((api) => api._id !== id);
-    //         if(!prevApis) return prev;
-    //         return [...prevApis, apiNode];
-    //     })
-    // }
-
     //fetch all apis related to the journey
     useEffect(() => {   
         async function fetchApis(){
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/journey/apis`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/journeys/apis`);
             if(!res.ok) {
                 alert('Failed to fetch apis');
                 return;
@@ -117,14 +68,12 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
         }
         fetchApis();
     }, []);
-    
-    // console.log("connections", connections);
 
     //fetch trigger node
     useEffect(() => {
         async function fetchTrigger(){
             if(journey === null || journey?.triggerID === null) return;
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/trigger`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/triggers`);
             if(!res.ok) {
                 // alert('Failed to fetch trigger');
                 setTriggerCreated(false);
@@ -169,12 +118,70 @@ export default function Canvas({journey}: {journey: JourneyType|null}) {
                <ApiBlock idx={i} key={i} canvasSize={canvasSize} values={node}/>
             )
             }
-            {/* <Line from={{ x: 531, y: 554 }} to={{ x:868, y: 388 }} /> */}
+            
+        </div>
+    )
+}
+
+
+// import Line from "./line"
+
+// interface ConnectionType {
+//     source: {x: number, y: number};
+//     target: {x: number, y: number};
+// }
+
+
+//     const connections : ConnectionType[] | undefined  = apiNodes?.map((apiNode) => {
+//     // console.log("apiNode", apiNode);
+//     const connectionsForApiNode: ConnectionType[] = [];
+
+//     if(apiNode.successApiID) {
+//         const source = apiNode.succPos;
+
+//         //@ts-expect-error because apiNode is unpopulated 
+//         const target = apiNodes.find((api) => api._id === apiNode.successApiID as string)?.parPos;
+//         if(source && target) connectionsForApiNode.push({source, target});
+//         // console.log("source", source, "target", target);
+//     }
+//     if(apiNode.failureApiID) {
+//         const source = apiNode.failPos;
+//         //@ts-expect-error because apiNode is unpopulated 
+//         const target = apiNodes.find((api) => api._id === apiNode.failureApiID as string)?.parPos;
+//         if(source && target) connectionsForApiNode.push({source, target});
+//         // console.log("source", source, "target", target);
+//     }
+
+//     return connectionsForApiNode;
+// }).flat();
+
+// type posType = {
+//     succBtnPos: {x: number, y: number}, 
+//     failBtnPos: {x: number, y: number}, 
+//     parBtnPos: {x: number, y: number}
+// }; 
+
+
+
+
+    // function updateApiPos(id: string, pos: posType) {
+    //     const apiNode = apiNodes?.find((api) => api._id === id);
+    //     if(!apiNode) return;
+    //     apiNode.succPos = pos.succBtnPos;
+    //     apiNode.failPos = pos.failBtnPos; 
+    //     apiNode.parPos = pos.parBtnPos;
+
+    //     setApiNodes((prev) => {
+    //         const prevApis = prev?.filter((api) => api._id !== id);
+    //         if(!prevApis) return prev;
+    //         return [...prevApis, apiNode];
+    //     })
+    // }
+
+
+{/* <Line from={{ x: 531, y: 554 }} to={{ x:868, y: 388 }} /> */}
             {/* {
                 connections?.map((connection, i) => 
                     <Line key={i} from={connection.source} to={connection.target} />
                 )
             } */}
-        </div>
-    )
-}

@@ -37,9 +37,8 @@ async function initiateAPIflow(api: any, journey_id: string) {
                 break;
             }
         }
-        // console.log("response: ", response);
-        if(response.ok) {
-            // const jsonResponse = await response.json();
+        if(response && response.ok) {
+            //create new log
             const log = new Log({
                 log: {
                     url: api.url, 
@@ -50,31 +49,12 @@ async function initiateAPIflow(api: any, journey_id: string) {
                     message: "Success", 
                     timeStamp: new Date()
                 }}); 
-            await log.save();
-            logs.push(log);
-            if(api.successApiID != null) {
-                api = await Api.findOne({_id: api.successApiID});
-            }else {
-               break;
-            }
-        }
-        else {
-            const log = new Log({
-                log: {
-                    url: api.url, 
-                    payload: api.body, 
-                    status: response.status, 
-                    response: null, 
-                    apiID: api._id, 
-                    message: "Failure", 
-                    timeStamp: new Date()
-                }}); 
-            await log.save();
-            logs.push(log);
-            if(api.failureApiID != null) {
-                api = await Api.findOne({_id: api.failureApiID});
-            }else {
-                break;
+                await log.save();
+                logs.push(log);
+                if(api.successApiID != null) {
+                    api = await Api.findOne({_id: api.successApiID});
+                }else {
+                    break;
             }
         }
     }

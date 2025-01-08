@@ -12,7 +12,7 @@ export default function Main() {
       //fetch journey
     useEffect(()=>{
         async function fetchJourney(){
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/journey`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/journeys`);
             const data = await res.json();
             if(data) setJourney(data);
             localStorage.setItem('journey', JSON.stringify(data));

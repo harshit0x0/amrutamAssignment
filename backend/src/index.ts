@@ -30,11 +30,11 @@ async function main(){
         console.log("\n\nSERVER NOT STARTED!! ", e);
     }
     
-    app.use('/trigger', TriggerRouter);
-    app.use('/journey', JourneyRouter);
-    app.use('/api', ApiRouter);
+    app.use('/triggers', TriggerRouter);
+    app.use('/journeys', JourneyRouter);
+    app.use('/apis', ApiRouter);
 
-
+ 
 }
 try{
     main();
