@@ -3,12 +3,19 @@ import Api from "../model/api";
 import Log from "../model/logs";
 
 
-async function initiateAPIflow(api: any, journey_id: string) {
+async function initiateAPIflow(api: any, journey_id: string, visApis: any = []) {
     
     const logs = [];
 
     while(true){      
         console.log("api hit: ", api.url);
+        
+        //check for loop
+        if(visApis.includes(api._id)) {
+            throw new Error("Loop detected");
+        }
+        visApis.push(api._id);
+
         const apiHeaders = api.headers.map((header: any) => `${header.key}: ${header.value}`);
         const headerObj = {...apiHeaders};
         let response;
@@ -49,12 +56,12 @@ async function initiateAPIflow(api: any, journey_id: string) {
                     message: "Success", 
                     timeStamp: new Date()
                 }}); 
-                await log.save();
-                logs.push(log);
-                if(api.successApiID != null) {
-                    api = await Api.findOne({_id: api.successApiID});
-                }else {
-                    break;
+            await log.save();
+            logs.push(log);
+            if(api.successApiID != null) {
+                api = await Api.findOne({_id: api.successApiID});
+            }else {
+                break;
             }
         }
     }
@@ -137,7 +144,11 @@ module.exports.startWorkflow = async function(req: any, res: any) {
         }
 
         console.log("Workflow started!!");
-        await initiateAPIflow(api, journey._id);
+        try{
+            await initiateAPIflow(api, journey._id);
+        } catch(e){
+            res.status(400).send(e.message);
+        }
         console.log("Workflow ended!!");
         res.status(200).send("Workflow ended");
 

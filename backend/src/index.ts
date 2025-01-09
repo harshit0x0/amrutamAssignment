@@ -13,9 +13,9 @@ async function main(){
     app.use(express.json());
     app.use(cors());
 
-    //enable delete and put requests
+    //enable delete and patch requests
     app.use((req, res, next) => {
-        res.setHeader("Access-Control-Allow-Methods", "DELETE, PUT");
+        res.setHeader("Access-Control-Allow-Methods", "DELETE, PATCH");
         next();
     })
 
